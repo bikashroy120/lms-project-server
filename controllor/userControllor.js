@@ -52,7 +52,7 @@ export const regesterControllor = catchAsyncErrors(async (req, res, next) => {
 })
 
 export const creactActivitonToken = (user) => {
-    const activitonnCode = Math.floor(1000 + Math.random() * 9000)
+    const activitonnCode = Math.floor(1000 + Math.random() * 9000).toString()
     const token = jwt.sign({ user, activitonnCode }, process.env.ACTIVITION_SECRIET, { expiresIn: "5m" })
 
     return { token, activitonnCode }
@@ -64,9 +64,13 @@ export const verfyUser = catchAsyncErrors(async (req, res, next) => {
     try {
         const { token, activitonnCode } = req.body;
 
-        const newUser = jwt.sign(token, process.env.ACTIVITION_SECRIET)
+        console.log("dadad", activitonnCode)
 
-        if (newUser.activitionCode !== activitonnCode) {
+        const newUser = jwt.verify(token, process.env.ACTIVITION_SECRIET)
+
+        console.log(newUser.activitonnCode)
+
+        if (newUser.activitonnCode !== activitonnCode) {
             return next(new ErrorHandler("Invalid OTP code", 400))
         }
 
@@ -91,4 +95,28 @@ export const verfyUser = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler(error.message, 400))
     }
 
+})
+
+
+
+export const userLogin  = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        const {email,password} = req.body;
+
+        if(!email || !password){
+            return next(new ErrorHandler("Please Enter Email Or Password",400))
+        }
+
+        const user = await userModal.findOne({email}).select("+password")
+
+        if(!user){
+            return next(new ErrorHandler("Invlied email and password",400))
+        }
+
+        if(user.password !==password){
+            return next(new ErrorHandler("Invlied email and password",400))
+        }
+    } catch (error) {
+        return next(new ErrorHandler(error.message,400))
+    }
 })

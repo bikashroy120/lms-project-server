@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
 
@@ -34,6 +35,16 @@ const userSchema = new mongoose.Schema({
         }
     ]
 },{timestamps:true})
+
+
+userSchema.methods.SignAccessToken = ()=>{
+    return jwt.sign({id:this._id},process.env.ACCRSS_TOKEN || " " )
+}
+
+userSchema.methods.SignRefreshToken = ()=>{
+    return jwt.sign({id:this._id},process.env.REFRESH_TOKEN || " " )
+}
+
 
 
 const userModal = mongoose.model("User",userSchema)
