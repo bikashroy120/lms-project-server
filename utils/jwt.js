@@ -1,5 +1,5 @@
 import dotenv from "dotenv"
-import { redis } from "./redis.js";
+// import { redis } from "./redis.js";
 dotenv.config()
 
 export const sendToken = (user, statusCode, res) => {
@@ -7,7 +7,7 @@ export const sendToken = (user, statusCode, res) => {
     const accessToken = user.SignAccessToken();
     const refreshToken = user.SignRefreshToken();
 
-    redis.set(user._id, JSON.stringify(user))
+    // redis.set(user._id, JSON.stringify(user))
 
     const accessTokenExpire = parseInt(process.env.ACCESS_TOKEN_EXPIRE || '300', 10)
     const refreshTokenExpire = parseInt(process.env.REFRESH_TOKEN_RXPIRE || '1200', 10)
