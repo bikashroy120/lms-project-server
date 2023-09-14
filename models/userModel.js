@@ -37,11 +37,11 @@ const userSchema = new mongoose.Schema({
 },{timestamps:true})
 
 
-userSchema.methods.SignAccessToken = ()=>{
+userSchema.methods.SignAccessToken = function (){
     return jwt.sign({id:this._id},process.env.ACCRSS_TOKEN || " " )
 }
 
-userSchema.methods.SignRefreshToken = ()=>{
+userSchema.methods.SignRefreshToken = function (){
     return jwt.sign({id:this._id},process.env.REFRESH_TOKEN || " " )
 }
 

@@ -4,6 +4,8 @@ import { catchAsyncErrors } from "../middleware/catchAsyncErrors.js";
 import userModal from "../models/userModel.js";
 import ErrorHandler from "../utils/ErrorHandlers.js";
 import jwt from "jsonwebtoken"
+import { sendToken } from "../utils/jwt.js";
+
 
 
 
@@ -109,6 +111,8 @@ export const userLogin  = catchAsyncErrors(async(req,res,next)=>{
 
         const user = await userModal.findOne({email}).select("+password")
 
+        console.log(user)
+
         if(!user){
             return next(new ErrorHandler("Invlied email and password",400))
         }
@@ -116,6 +120,28 @@ export const userLogin  = catchAsyncErrors(async(req,res,next)=>{
         if(user.password !==password){
             return next(new ErrorHandler("Invlied email and password",400))
         }
+
+
+        sendToken(user,200,res)
+
+    } catch (error) {
+        return next(new ErrorHandler(error.message,400))
+    }
+})
+
+
+export const logoutUser = catchAsyncErrors(async(req,res,next)=>{
+    try {
+
+        res.cookie("access_token", " ", {maxAge:1});
+        res.cookie("refresh_token", " ", {maxAge:1});
+        
+
+        res.status(200).json({
+            success:true,
+            message:"log out successfully"
+        })
+
     } catch (error) {
         return next(new ErrorHandler(error.message,400))
     }
