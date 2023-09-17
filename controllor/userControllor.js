@@ -185,5 +185,22 @@ export const updateToken = catchAsyncErrors(async(req,res,next)=>{
 
 
 export const getOneUser = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        /* ==== get user id  ===== */ 
+        const userId = req.user._id
 
+        /* ==== find user  ===== */ 
+        const user = await userModal.findById(userId)
+        if(!user){
+            return next(new ErrorHandler("user not found", 400))
+        }
+
+        /* ==== send user  ===== */ 
+        res.status(200).json({
+            success:true,
+            user
+        })
+    } catch (error) {
+        
+    }
 })
