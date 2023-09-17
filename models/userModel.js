@@ -36,17 +36,6 @@ const userSchema = new mongoose.Schema({
     ]
 },{timestamps:true})
 
-
-userSchema.methods.SignAccessToken = function (){
-    return jwt.sign({id:this._id},process.env.ACCRSS_TOKEN || " " )
-}
-
-userSchema.methods.SignRefreshToken = function (){
-    return jwt.sign({id:this._id},process.env.REFRESH_TOKEN || " " )
-}
-
-
-
 const userModal = mongoose.model("User",userSchema)
 
 export default userModal

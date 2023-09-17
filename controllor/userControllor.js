@@ -132,10 +132,8 @@ export const userLogin  = catchAsyncErrors(async(req,res,next)=>{
 
 export const logoutUser = catchAsyncErrors(async(req,res,next)=>{
     try {
-
-        res.cookie("access_token", " ", {maxAge:1});
-        res.cookie("refresh_token", " ", {maxAge:1});
-        
+        res.clearCookie("accessToken")
+        res.clearCookie("refreshToken")
 
         res.status(200).json({
             success:true,
@@ -145,4 +143,18 @@ export const logoutUser = catchAsyncErrors(async(req,res,next)=>{
     } catch (error) {
         return next(new ErrorHandler(error.message,400))
     }
+})
+
+
+export const updateToken = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        const refreshToken = req.cookis.refreshToken
+    } catch (error) {
+        return next(new ErrorHandler(error.message,400))
+    }
+})
+
+
+export const getOneUser = catchAsyncErrors(async(req,res,next)=>{
+
 })
