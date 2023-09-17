@@ -12,8 +12,6 @@ export const isAutheticated = catchAsyncErrors(async (req, res, next) => {
 
         // ====get access token=====
         const accessToken = req.cookies.accessToken
-        console.log(accessToken)
-
         if (!accessToken) {
             return next(new ErrorHandler("Please login to access the resourse", 400))
         }
@@ -23,9 +21,7 @@ export const isAutheticated = catchAsyncErrors(async (req, res, next) => {
             return next(new ErrorHandler("access token is not valid", 400))
         }
         /* ====get user by token===== */
-        console.log(decodet)
         const user  = await userModal.findById(decodet.id)
-
         if (!user) {
             return next(new ErrorHandler("user not found", 400))
         }

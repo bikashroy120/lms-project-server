@@ -7,7 +7,7 @@ router.post("/regester",regesterControllor);
 router.post("/verfy-user",verfyUser);
 router.post("/login",userLogin);
 router.get("/logout",isAutheticated,logoutUser);
-router.get("/refresh-token",isAutheticated,updateToken);
+router.get("/refresh-token",updateToken);
 
 
 export default router

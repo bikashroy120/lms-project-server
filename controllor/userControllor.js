@@ -4,7 +4,7 @@ import { catchAsyncErrors } from "../middleware/catchAsyncErrors.js";
 import userModal from "../models/userModel.js";
 import ErrorHandler from "../utils/ErrorHandlers.js";
 import jwt from "jsonwebtoken"
-import { sendToken } from "../utils/jwt.js";
+import { accesstokenOption, refreshtokenOption, sendToken } from "../utils/jwt.js";
 
 
 
@@ -148,14 +148,35 @@ export const logoutUser = catchAsyncErrors(async(req,res,next)=>{
 
 export const updateToken = catchAsyncErrors(async(req,res,next)=>{
     try {
+        /* ==== get refresh token and send error ===== */ 
         const refreshToken = req.cookies.refreshToken;
+        if (!refreshToken) {
+            return next(new ErrorHandler("Please login to access the resourse", 400))
+        }
 
-        console.log(refreshToken)
+        /* ==== verify refresh token ===== */ 
+        const decode = jwt.verify(refreshToken,process.env.REFRESH_TOKEN)
+        if (!decode) {
+            return next(new ErrorHandler("access token is not valid", 400))
+        }
+        /* ==== find user by  token ===== */ 
+        const user = userModal.findById(decode.id)
+        if(!user){
+            return next(new ErrorHandler("user not found", 400))
+        }
+        /* ==== genareat new  token ===== */ 
+        const newAccesstoken = jwt.sign({id:user._id},process.env.ACCRSS_TOKEN,{expiresIn:"5m"})
+        const newRefreshtoken = jwt.sign({id:user._id},process.env.REFRESH_TOKEN,{expiresIn:"3d"})
 
+        /* ==== send token cookies ===== */ 
+        res.cookie('accessToken', newAccesstoken, accesstokenOption);
+        res.cookie('refreshToken', newRefreshtoken, refreshtokenOption);
 
+        /* ==== send status  ===== */ 
         res.status(200).json({
             success:true,
-            message:"working"
+            message:"updte token",
+            accesstoken:newAccesstoken
         })
     } catch (error) {
         return next(new ErrorHandler(error.message,400))
