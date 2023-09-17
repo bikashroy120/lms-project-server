@@ -23,16 +23,14 @@ export const isAutheticated = catchAsyncErrors(async (req, res, next) => {
             return next(new ErrorHandler("access token is not valid", 400))
         }
         /* ====get user by token===== */
-        // const user =await redis.get(decodet.id)
-
+        console.log(decodet)
         const user  = await userModal.findById(decodet.id)
 
         if (!user) {
             return next(new ErrorHandler("user not found", 400))
         }
         /* ===== send user ===== */
-        console.log(user)
-        req.user = JSON.parse(user)
+        req.user = user
         next()
     } catch (error) {
         return next(new ErrorHandler(error.message, 400))

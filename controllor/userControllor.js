@@ -148,7 +148,15 @@ export const logoutUser = catchAsyncErrors(async(req,res,next)=>{
 
 export const updateToken = catchAsyncErrors(async(req,res,next)=>{
     try {
-        const refreshToken = req.cookis.refreshToken
+        const refreshToken = req.cookies.refreshToken;
+
+        console.log(refreshToken)
+
+
+        res.status(200).json({
+            success:true,
+            message:"working"
+        })
     } catch (error) {
         return next(new ErrorHandler(error.message,400))
     }
