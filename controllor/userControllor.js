@@ -201,6 +201,40 @@ export const getOneUser = catchAsyncErrors(async(req,res,next)=>{
             user
         })
     } catch (error) {
+        return next(new ErrorHandler(error.message,400))
+    }
+})
+
+
+export const updatePassword = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        /* ==== get old and new password  ===== */ 
+        const {oldPassword,newPassword} = req.body;
+        const userId = req.user._id;
+
+        /* ==== find user by user id  ===== */ 
+        const user = await userModal.findById(userId)
+        if(!user){
+            return next(new ErrorHandler("user not found", 400))
+        }
+
+        /* ==== password macth  ===== */ 
+        const isMacthPassword = user.password === oldPassword;
+        if(!isMacthPassword){
+            return next(new ErrorHandler("Envalid old password", 400))
+        }
+
+        /* ==== save new password  ===== */ 
+        user.password = newPassword;
+        await user.save()
+
+        /* ==== send status  ===== */ 
+        res.status(200).json({
+            success:true,
+            message:"user password update"
+        })
         
+    } catch (error) {
+        return next(new ErrorHandler(error.message,400))
     }
 })
