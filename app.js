@@ -7,6 +7,7 @@ import dotenv from "dotenv"
 
 import { ErrorMiddleware } from "./middleware/error.js";
 import  userRoute  from "./routes/userRoute.js";
+import coruseRoute from "./routes/courseRoute.js"
 
 
 
@@ -27,8 +28,9 @@ app.use(
     })
 )
 
-
+// routes
 app.use("/api/v1",userRoute)
+app.use("/api/v1/course",coruseRoute)
 
 // testing api
 app.get("/test",(req,res,next)=>{
