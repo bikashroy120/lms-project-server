@@ -30,7 +30,7 @@ export const uploadCoures = catchAsyncErrors(async(req,res,next)=>{
     }
 })
 
-
+// update course
 export const editcourse = catchAsyncErrors(async(req,res,next)=>{
     try {
         const courseId = req.params.id;
@@ -76,5 +76,41 @@ export const editcourse = catchAsyncErrors(async(req,res,next)=>{
 
     } catch (error) {
         next(new ErrorHandler(error.message,500))
+    }
+})
+
+
+// get all course
+export const getAllCourse = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        const course = await courseModal.find().select("-courseData")
+
+        res.status(200).json({
+            success:true,
+            course
+        })
+    } catch (error) {
+        next(new ErrorHandler(error.message,500))
+    }
+})
+
+
+// get one course
+export const getOneCouse = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        const courseId = req.params.id;
+
+        const course = await courseModal.findById(courseId).select("-courseData")
+        if(!course){
+            next(new ErrorHandler("course not found",400))
+        }
+
+        res.status(200).json({
+            success:true,
+            course
+        })
+        
+    } catch (error) {
+        next(new ErrorHandler(error.message,500)) 
     }
 })
