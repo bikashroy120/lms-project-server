@@ -5,7 +5,7 @@ import userModal from "../models/userModel.js";
 import ErrorHandler from "../utils/ErrorHandlers.js";
 import jwt from "jsonwebtoken"
 import { accesstokenOption, refreshtokenOption, sendToken } from "../utils/jwt.js";
-
+import cloudinary from "cloudinary"
 
 
 
@@ -101,140 +101,191 @@ export const verfyUser = catchAsyncErrors(async (req, res, next) => {
 
 
 
-export const userLogin  = catchAsyncErrors(async(req,res,next)=>{
+export const userLogin = catchAsyncErrors(async (req, res, next) => {
     try {
-        const {email,password} = req.body;
+        const { email, password } = req.body;
 
-        if(!email || !password){
-            return next(new ErrorHandler("Please Enter Email Or Password",400))
+        if (!email || !password) {
+            return next(new ErrorHandler("Please Enter Email Or Password", 400))
         }
 
-        const user = await userModal.findOne({email}).select("+password")
+        const user = await userModal.findOne({ email }).select("+password")
 
         console.log(user)
 
-        if(!user){
-            return next(new ErrorHandler("Invlied email and password",400))
+        if (!user) {
+            return next(new ErrorHandler("Invlied email and password", 400))
         }
 
-        if(user.password !==password){
-            return next(new ErrorHandler("Invlied email and password",400))
+        if (user.password !== password) {
+            return next(new ErrorHandler("Invlied email and password", 400))
         }
 
 
-        sendToken(user,200,res)
+        sendToken(user, 200, res)
 
     } catch (error) {
-        return next(new ErrorHandler(error.message,400))
+        return next(new ErrorHandler(error.message, 400))
     }
 })
 
 
-export const logoutUser = catchAsyncErrors(async(req,res,next)=>{
+export const logoutUser = catchAsyncErrors(async (req, res, next) => {
     try {
         res.clearCookie("accessToken")
         res.clearCookie("refreshToken")
 
         res.status(200).json({
-            success:true,
-            message:"log out successfully"
+            success: true,
+            message: "log out successfully"
         })
 
     } catch (error) {
-        return next(new ErrorHandler(error.message,400))
+        return next(new ErrorHandler(error.message, 400))
     }
 })
 
 
-export const updateToken = catchAsyncErrors(async(req,res,next)=>{
+export const updateToken = catchAsyncErrors(async (req, res, next) => {
     try {
-        /* ==== get refresh token and send error ===== */ 
+        /* ==== get refresh token and send error ===== */
         const refreshToken = req.cookies.refreshToken;
         if (!refreshToken) {
             return next(new ErrorHandler("Please login to access the resourse", 400))
         }
 
-        /* ==== verify refresh token ===== */ 
-        const decode = jwt.verify(refreshToken,process.env.REFRESH_TOKEN)
+        /* ==== verify refresh token ===== */
+        const decode = jwt.verify(refreshToken, process.env.REFRESH_TOKEN)
         if (!decode) {
             return next(new ErrorHandler("access token is not valid", 400))
         }
-        /* ==== find user by  token ===== */ 
+        /* ==== find user by  token ===== */
         const user = userModal.findById(decode.id)
-        if(!user){
+        if (!user) {
             return next(new ErrorHandler("user not found", 400))
         }
-        /* ==== genareat new  token ===== */ 
-        const newAccesstoken = jwt.sign({id:user._id},process.env.ACCRSS_TOKEN,{expiresIn:"5m"})
-        const newRefreshtoken = jwt.sign({id:user._id},process.env.REFRESH_TOKEN,{expiresIn:"3d"})
+        /* ==== genareat new  token ===== */
+        const newAccesstoken = jwt.sign({ id: user._id }, process.env.ACCRSS_TOKEN, { expiresIn: "5m" })
+        const newRefreshtoken = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN, { expiresIn: "3d" })
 
-        /* ==== send token cookies ===== */ 
+        /* ==== send token cookies ===== */
         res.cookie('accessToken', newAccesstoken, accesstokenOption);
         res.cookie('refreshToken', newRefreshtoken, refreshtokenOption);
 
-        /* ==== send status  ===== */ 
+        /* ==== send status  ===== */
         res.status(200).json({
-            success:true,
-            message:"updte token",
-            accesstoken:newAccesstoken
+            success: true,
+            message: "updte token",
+            accesstoken: newAccesstoken
         })
     } catch (error) {
-        return next(new ErrorHandler(error.message,400))
+        return next(new ErrorHandler(error.message, 400))
     }
 })
 
 
-export const getOneUser = catchAsyncErrors(async(req,res,next)=>{
+export const getOneUser = catchAsyncErrors(async (req, res, next) => {
     try {
-        /* ==== get user id  ===== */ 
+        /* ==== get user id  ===== */
         const userId = req.user._id
 
-        /* ==== find user  ===== */ 
+        /* ==== find user  ===== */
         const user = await userModal.findById(userId)
-        if(!user){
+        if (!user) {
             return next(new ErrorHandler("user not found", 400))
         }
 
-        /* ==== send user  ===== */ 
+        /* ==== send user  ===== */
         res.status(200).json({
-            success:true,
+            success: true,
             user
         })
     } catch (error) {
-        return next(new ErrorHandler(error.message,400))
+        return next(new ErrorHandler(error.message, 400))
     }
 })
 
 
-export const updatePassword = catchAsyncErrors(async(req,res,next)=>{
+export const updatePassword = catchAsyncErrors(async (req, res, next) => {
     try {
-        /* ==== get old and new password  ===== */ 
-        const {oldPassword,newPassword} = req.body;
+        /* ==== get old and new password  ===== */
+        const { oldPassword, newPassword } = req.body;
         const userId = req.user._id;
 
-        /* ==== find user by user id  ===== */ 
+        /* ==== find user by user id  ===== */
         const user = await userModal.findById(userId)
-        if(!user){
+        if (!user) {
             return next(new ErrorHandler("user not found", 400))
         }
 
-        /* ==== password macth  ===== */ 
+        /* ==== password macth  ===== */
         const isMacthPassword = user.password === oldPassword;
-        if(!isMacthPassword){
+        if (!isMacthPassword) {
             return next(new ErrorHandler("Envalid old password", 400))
         }
 
-        /* ==== save new password  ===== */ 
+        /* ==== save new password  ===== */
         user.password = newPassword;
         await user.save()
 
-        /* ==== send status  ===== */ 
+        /* ==== send status  ===== */
+        res.status(200).json({
+            success: true,
+            message: "user password update"
+        })
+
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 400))
+    }
+})
+
+
+export const updateAvater = catchAsyncErrors(async (req, res, next) => {
+    try {
+        /* ==== get user id ===== */
+        const userId = req.user._id;
+        const { avater } = req.body;
+        /* ==== find user by user id  ===== */
+        const user = await userModal.findById(userId)
+        if (!user) {
+            return next(new ErrorHandler("user not found", 400))
+        }
+
+        if (user && avater) {
+            /* ====if user have one avater then call this if  ===== */ 
+            if (user?.avater?.public_id) {
+                /* ==== first delete public id and update avater  ===== */ 
+                await cloudinary.v2.uploader.destroy(user?.avater?.public_id)
+
+                const myCloud = await cloudinary.v2.uploader.upload(avater, {
+                    folder: "avaters",
+                    width: 150
+                })
+                user.avater = {
+                    public_id: myCloud.public_id,
+                    url: myCloud.secure_url
+                }
+            } else {
+                /* ==== user not avater then call this  ===== */ 
+                const myCloud = await cloudinary.v2.uploader.upload(avater, {
+                    folder: "avaters",
+                    width: 150
+                })
+                user.avater = {
+                    public_id: myCloud.public_id,
+                    url: myCloud.secure_url
+                }
+            }
+        }
+        /* ==== update and send  ===== */ 
+        await user?.save()
+
         res.status(200).json({
             success:true,
-            message:"user password update"
+            message:"user profile update success",
+            user,
         })
-        
     } catch (error) {
-        return next(new ErrorHandler(error.message,400))
+        return next(new ErrorHandler(error.message, 400))
     }
 })
