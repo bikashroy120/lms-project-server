@@ -114,3 +114,41 @@ export const getOneCouse = catchAsyncErrors(async(req,res,next)=>{
         next(new ErrorHandler(error.message,500)) 
     }
 })
+
+
+// create question
+
+export const createQuestion = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        const {question,couresId,contentId} = req.body;
+         /* ==== find coures by coures id ===== */ 
+        const coures = await courseModal.findById(couresId)
+        if(!coures){
+            next(new ErrorHandler("Invalid course id",400)) 
+        }
+
+        const courseContent = coures.courseData.find(item=>item._id.equals(contentId))
+        if(!courseContent){
+            next(new ErrorHandler("Invalid contentId id",400)) 
+        }
+
+
+        // create a new question content
+        const newQuestion = {
+            user:req.user,
+            question,
+            questionReples:[]
+        }
+        // add question to our course
+        courseContent.question.push(newQuestion)
+
+        await coures?.save()
+
+        res.status(200).json({
+            success:true,
+            message:"question add successfully"
+        })
+    } catch (error) {
+        next(new ErrorHandler(error.message,500)) 
+    }
+})
