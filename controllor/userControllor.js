@@ -66,8 +66,6 @@ export const verfyUser = catchAsyncErrors(async (req, res, next) => {
     try {
         const { token, activitonnCode } = req.body;
 
-        console.log("dadad", activitonnCode)
-
         const newUser = jwt.verify(token, process.env.ACTIVITION_SECRIET)
 
         console.log(newUser.activitonnCode)

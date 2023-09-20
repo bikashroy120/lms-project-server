@@ -152,3 +152,44 @@ export const createQuestion = catchAsyncErrors(async(req,res,next)=>{
         next(new ErrorHandler(error.message,500)) 
     }
 })
+
+// answer question
+export const answerQuestion = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        const {answer,questionId,couresId,contentId} = req.body;
+         /* ==== find coures by coures id ===== */ 
+         const coures = await courseModal.findById(couresId)
+         if(!coures){
+             next(new ErrorHandler("Invalid course id",400)) 
+         }
+            /* ==== find course data ===== */ 
+         const courseContent = coures.courseData.find(item=>item._id.equals(contentId))
+         if(!courseContent){
+             next(new ErrorHandler("Invalid contentId id",400)) 
+         }
+         /* ==== find question ===== */ 
+         const question = courseContent.question.find(item=>item._id.equals(questionId))
+         if(!question){
+            next(new ErrorHandler("Invalid question id",400)) 
+        }
+
+        // create answer data
+
+        const answerData = {
+            user:req.user,
+            answer
+        }
+        // save answer
+        question.questionReples.push(answerData)
+        await coures?.save()
+
+
+        res.status(200).json({
+            sucess:true,
+            message:"answer send successfully"
+        })
+
+    } catch (error) {
+        next(new ErrorHandler(error.message,500)) 
+    }
+})
