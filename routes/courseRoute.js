@@ -1,6 +1,6 @@
 import express from "express"
 import { isAutheticated } from "../middleware/auth.js";
-import { addReview, answerQuestion, createQuestion, editcourse, getAllCourse, getOneCouse, uploadCoures } from "../controllor/couresControllor.js";
+import { addReview, answerQuestion, createQuestion, editcourse, getAllCourse, getOneCouse, replyReview, uploadCoures } from "../controllor/couresControllor.js";
 const router = express.Router()
 
 router.post("/create-course",isAutheticated,uploadCoures)
@@ -10,5 +10,6 @@ router.get("/:id",getOneCouse)
 router.put("/question-add",isAutheticated,createQuestion)
 router.put("/question-answer",isAutheticated,answerQuestion)
 router.put("/add-review/:id",isAutheticated,addReview)
+router.put("/review-replay",isAutheticated,replyReview)
 
 export default router

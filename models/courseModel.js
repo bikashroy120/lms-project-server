@@ -7,7 +7,8 @@ const reviewSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    comment: String
+    comment: String,
+    reviewReplay:[Object]
 })
 
 

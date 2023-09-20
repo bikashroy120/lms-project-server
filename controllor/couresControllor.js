@@ -200,7 +200,7 @@ export const answerQuestion = catchAsyncErrors(async (req, res, next) => {
 export const addReview = catchAsyncErrors(async (req, res, next) => {
     try {
         const couresId = req.params.id;
-        const {review,rating} = req.body;
+        const { review, rating } = req.body;
         /* ==== find coures by coures id ===== */
         const coures = await courseModal.findById(couresId)
         if (!coures) {
@@ -208,30 +208,62 @@ export const addReview = catchAsyncErrors(async (req, res, next) => {
         }
 
         const reviewData = {
-            user:req.user,
+            user: req.user,
             rating,
-            comment:review,
+            comment: review,
         }
 
         coures.reviews.push(reviewData)
 
         let avg = 0;
-        coures.reviews.forEach(rev=>avg+=rev.rating)
+        coures.reviews.forEach(rev => avg += rev.rating)
 
-        if(coures){
-            coures.rating = avg/coures.reviews.length
+        if (coures) {
+            coures.rating = avg / coures.reviews.length
         }
 
         await coures?.save()
 
         const notification = {
-            title:"new revisition add"
+            title: "new revisition add"
         }
+
+        res.status(200).json({
+            success: true,
+            coures
+        })
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500))
+    }
+})
+
+export const replyReview = catchAsyncErrors(async (req, res, next) => {
+    try {
+        const { couresId, reviewReplay, reviewId } = req.body;
+        /* ==== find coures by coures id ===== */
+        const coures = await courseModal.findById(couresId)
+        if (!coures) {
+            next(new ErrorHandler("Invalid course id", 400))
+        }
+
+        const review = coures.reviews.find(item=>item._id.toString()===reviewId)
+        if (!review) {
+            next(new ErrorHandler("Invalid review id", 400))
+        }
+
+        const replayData = {
+            user:req.user,
+            reviewReplay
+        }
+
+        review.reviewReplay.push(replayData)
+        await coures?.save()
 
         res.status(200).json({
             success:true,
             coures
         })
+
     } catch (error) {
         next(new ErrorHandler(error.message, 500))
     }
