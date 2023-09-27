@@ -287,3 +287,32 @@ export const updateAvater = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler(error.message, 400))
     }
 })
+
+// get all user for admin
+export const getAllUser = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        const users = await userModal.find().sort({createdAt:-1})
+        res.status(200).json({
+            success:true,
+            users
+        })
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 400))
+    }
+})
+
+// update user roll 
+export const updateuserRoll = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        const {id,role} = req.body;
+        const user = await userModal.findByIdAndUpdate(id,{role},{new:true})
+
+        res.status(200).json({
+            success:true,
+            user
+        })
+
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 400))
+    }
+})
