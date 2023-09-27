@@ -316,3 +316,26 @@ export const updateuserRoll = catchAsyncErrors(async(req,res,next)=>{
         return next(new ErrorHandler(error.message, 400))
     }
 })
+
+
+export const deleteUser = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        const {id} = req.params;
+
+        const user = await userModal.findById(id)   
+
+        if(!user){
+            return next(new ErrorHandler('user Not found', 400))
+        }
+
+        await userModal.findByIdAndDelete(id)
+
+        res.status(200).json({
+            success:true,
+            message:"user delete success"
+        })
+
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 400))
+    }
+})

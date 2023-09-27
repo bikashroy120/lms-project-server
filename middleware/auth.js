@@ -32,3 +32,16 @@ export const isAutheticated = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler(error.message, 400))
     }
 })
+
+export const isAdmin = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        const user = req.user;
+
+        if(user.role!=="admin"){
+            return next(new ErrorHandler("you are not admin", 400))
+        }
+        next()
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 400))
+    }
+})
