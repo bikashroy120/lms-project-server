@@ -1,6 +1,7 @@
 import { catchAsyncErrors } from "../middleware/catchAsyncErrors.js";
 import ErrorHandler from "../utils/ErrorHandlers.js";
 import notificationModal from "../models/notificationModel.js";
+import cron from "node-cron"
 
 
 export const getNotification = catchAsyncErrors(async(req,res,next)=>{
@@ -32,4 +33,10 @@ export const updateNotification = catchAsyncErrors(async(req,res,next)=>{
     } catch (error) {
         return next(new ErrorHandler(error.message, 500))
     }
+})
+
+cron.schedule("0 0 0 * * *",async()=>{
+    const thirtyDaysAgo = new Date(Date.now()-30*24*60*60*1000);
+    await notificationModal.deleteMany({status:"read",createdAt:{$lt:thirtyDaysAgo}})
+    console.log("hello")
 })
