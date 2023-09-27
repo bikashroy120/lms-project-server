@@ -268,3 +268,19 @@ export const replyReview = catchAsyncErrors(async (req, res, next) => {
         next(new ErrorHandler(error.message, 500))
     }
 })
+
+
+export const getAllAdmin = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        const course = courseModal.find().sort({createdAt:-1})
+
+        res.status(200).json({
+            success:true,
+            course
+        })
+    } catch (error) {
+        next(new ErrorHandler(error.message, 500))
+    }
+})
+
+
