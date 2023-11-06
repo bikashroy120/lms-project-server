@@ -45,7 +45,7 @@ export const regesterControllor = catchAsyncErrors(async (req, res, next) => {
         res.status(201).json({
             success: true,
             message: `Pleace chack your email ${email}`,
-            token: activitionToken,
+            token: activitionToken.token,
             code:activitionCode,
         })
 
@@ -55,6 +55,9 @@ export const regesterControllor = catchAsyncErrors(async (req, res, next) => {
 })
 
 export const creactActivitonToken = (user) => {
+
+    console.log(user)
+
     const activitonnCode = Math.floor(1000 + Math.random() * 9000).toString()
     const token = jwt.sign({ user, activitonnCode }, process.env.ACTIVITION_SECRIET, { expiresIn: "5m" })
 
@@ -67,9 +70,11 @@ export const verfyUser = catchAsyncErrors(async (req, res, next) => {
     try {
         const { token, activitonnCode } = req.body;
 
+        console.log(token)
+
         const newUser = jwt.verify(token, process.env.ACTIVITION_SECRIET)
 
-        console.log(newUser.activitonnCode)
+        console.log(newUser)
 
         if (newUser.activitonnCode !== activitonnCode) {
             return next(new ErrorHandler("Invalid OTP code", 400))
@@ -164,8 +169,9 @@ export const updateToken = catchAsyncErrors(async (req, res, next) => {
             return next(new ErrorHandler("user not found", 400))
         }
         /* ==== genareat new  token ===== */
-        const newAccesstoken = jwt.sign({ id: user._id }, process.env.ACCRSS_TOKEN, { expiresIn: "5m" })
-        const newRefreshtoken = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN, { expiresIn: "3d" })
+
+        const newAccesstoken = jwt.sign({id:user._id},process.env.ACCRSS_TOKEN ,{expiresIn:"5m"} )
+        const newRefreshtoken = jwt.sign({id:user._id},process.env.REFRESH_TOKEN ,{expiresIn:"3d"} )
 
         /* ==== send token cookies ===== */
         res.cookie('accessToken', newAccesstoken, accesstokenOption);
