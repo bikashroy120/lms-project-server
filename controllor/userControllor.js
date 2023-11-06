@@ -36,16 +36,17 @@ export const regesterControllor = catchAsyncErrors(async (req, res, next) => {
             `
         }
 
-        try {
-            await emailWithNodemailler(emailData)
-        } catch (error) {
-            return next(new ErrorHandler(error.message, 400))
-        }
+        // try {
+        //     await emailWithNodemailler(emailData)
+        // } catch (error) {
+        //     return next(new ErrorHandler(error.message, 400))
+        // }
 
         res.status(201).json({
             success: true,
             message: `Pleace chack your email ${email}`,
-            token: activitionToken
+            token: activitionToken,
+            code:activitionCode,
         })
 
     } catch (error) {

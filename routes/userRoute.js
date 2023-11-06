@@ -4,7 +4,7 @@ import { isAdmin, isAutheticated } from "../middleware/auth.js";
 const router = express.Router()
  
 router.post("/regester",regesterControllor);
-router.post("/verfy-user",verfyUser);
+router.post("/activate-user",verfyUser);
 router.post("/login",userLogin);
 router.get("/logout",isAutheticated,logoutUser);
 router.get("/refresh-token",updateToken);
