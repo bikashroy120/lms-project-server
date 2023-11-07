@@ -115,8 +115,6 @@ export const userLogin = catchAsyncErrors(async (req, res, next) => {
 
         const user = await userModal.findOne({ email }).select("+password")
 
-        console.log(user)
-
         if (!user) {
             return next(new ErrorHandler("Invlied email and password", 400))
         }
@@ -157,17 +155,21 @@ export const updateToken = catchAsyncErrors(async (req, res, next) => {
         if (!refreshToken) {
             return next(new ErrorHandler("Please login to access the resourse", 400))
         }
-
         /* ==== verify refresh token ===== */
         const decode = jwt.verify(refreshToken, process.env.REFRESH_TOKEN)
         if (!decode) {
             return next(new ErrorHandler("access token is not valid", 400))
         }
+
+        console.log(decode)
         /* ==== find user by  token ===== */
-        const user = userModal.findById(decode.id)
+        const user = await userModal.findById(decode.id)
         if (!user) {
             return next(new ErrorHandler("user not found", 400))
         }
+
+        // console.log(user)
+
         /* ==== genareat new  token ===== */
 
         const newAccesstoken = jwt.sign({id:user._id},process.env.ACCRSS_TOKEN ,{expiresIn:"5m"} )
@@ -193,6 +195,8 @@ export const getOneUser = catchAsyncErrors(async (req, res, next) => {
     try {
         /* ==== get user id  ===== */
         const userId = req.user._id
+
+         console.log(req.user)
 
         /* ==== find user  ===== */
         const user = await userModal.findById(userId)
