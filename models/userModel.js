@@ -17,9 +17,9 @@ const userSchema = new mongoose.Schema({
         required:[true,"Please enter your password"],
         select:true
     },
+    address:String,
     avater:{
-        public_id:String,
-        url:String,
+        type:String
     },
     role:{
         type:String,

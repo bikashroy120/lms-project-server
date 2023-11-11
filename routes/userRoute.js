@@ -12,6 +12,7 @@ router.get("/me",isAutheticated,getOneUser);
 router.get("/users",isAutheticated,isAdmin,getAllUser)
 router.post("/update-password",isAutheticated,updatePassword);
 router.put("/update-avater",isAutheticated,updateAvater);
+router.put("/update-user",isAutheticated,updateAvater);
 router.put("/update-role",isAutheticated,updateuserRoll)
 
 export default router
