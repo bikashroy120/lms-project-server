@@ -310,6 +310,14 @@ export const updateUser = catchAsyncErrors(async (req, res, next) => {
     user.name=name;
     user.avater=avater
 
+    await user.save()
+    res.status(200).json({
+      success: true,
+      message: "user profile update success",
+      user,
+    });
+    
+
   } catch (error) {
     return next(new ErrorHandler(error.message, 400));
   }
