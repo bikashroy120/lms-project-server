@@ -11,6 +11,7 @@ import coruseRoute from "./routes/courseRoute.js"
 import orderRoute from "./routes/orderRoute.js"
 import notificationRoute from "./routes/notificationRoute.js"
 import analyticsRoute from "./routes/analyticsRoute.js"
+import categoryRoute from "./routes/categoryRoute.js"
 
 
 dotenv.config()
@@ -37,6 +38,7 @@ app.use("/api/v1/course",coruseRoute)
 app.use("/api/v1/order",orderRoute)
 app.use("/api/v1/",notificationRoute)
 app.use("/api/v1/",analyticsRoute)
+app.use("/api/v1/",categoryRoute)
 
 // testing api
 app.get("/test",(req,res,next)=>{
