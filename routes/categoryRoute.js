@@ -5,7 +5,7 @@ const router = express.Router()
 
 router.post("/create-category",addCategory)
 router.get("/all-category",getAllCategory)
-router.delete("delete/:id",deleteCategory)
+router.delete("/delete-category/:id",deleteCategory)
 
 
 export default router

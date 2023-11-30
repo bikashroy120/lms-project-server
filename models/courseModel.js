@@ -53,17 +53,10 @@ const courseSchema = new mongoose.Schema({
         type: Number
     },
     thumbnail: {
-        public_id: {
-            type: String,
-        },
-        url: {
-            type: String,
-        },
-    },
-    tags: {
         type: String,
         required: true,
     },
+    tags: [String],
     level: {
         type: String,
         required: true,
