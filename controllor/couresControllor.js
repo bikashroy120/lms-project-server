@@ -83,10 +83,19 @@ export const editcourse = catchAsyncErrors(async (req, res, next) => {
 // get all course
 export const getAllCourse = catchAsyncErrors(async (req, res, next) => {
     try {
-        const course = await courseModal.find().select("-courseData")
+
+        let queryStr = JSON.stringify(req.query)
+        queryStr = queryStr.replace(/\b|gte|lte|lt\b/g, (match)=> `${match}`);
+        const queryObj = JSON.parse(queryStr)
+        console.log(queryObj)
+
+        let query = courseModal.find(queryObj).select("-courseData")
+
+        const course = await query;
 
         res.status(200).json({
             success: true,
+            item:course.length,
             course
         })
     } catch (error) {

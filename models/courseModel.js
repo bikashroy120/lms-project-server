@@ -56,6 +56,10 @@ const courseSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    category:{
+        type: String,
+        required: true,
+    },
     tags: [String],
     level: {
         type: String,
