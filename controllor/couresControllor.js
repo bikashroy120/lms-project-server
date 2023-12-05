@@ -34,38 +34,10 @@ export const editcourse = catchAsyncErrors(async (req, res, next) => {
   try {
     const courseId = req.params.id;
     const data = req.body;
-    const thumbnail = data.thumbnail;
     const course = await courseModal.findById(courseId);
     if (!course) {
       next(new ErrorHandler("course not found", 400));
     }
-    if (course && thumbnail) {
-      /* ====if user have one avater then call this if  ===== */
-      if (course?.thumbnail?.public_id) {
-        /* ==== first delete public id and update avater  ===== */
-        await cloudinary.v2.uploader.destroy(course?.thumbnail?.public_id);
-
-        const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
-          folder: "coures",
-        });
-
-        data.thumbnail = {
-          public_id: myCloud.public_id,
-          url: myCloud.secure_url,
-        };
-      } else {
-        /* ==== user not avater then call this  ===== */
-        const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
-          folder: "coures",
-        });
-
-        data.thumbnail = {
-          public_id: myCloud.public_id,
-          url: myCloud.secure_url,
-        };
-      }
-    }
-
     const updateCourse = await courseModal.findByIdAndUpdate(
       courseId,
       { $set: data },
@@ -155,7 +127,7 @@ export const getOneCouse = catchAsyncErrors(async (req, res, next) => {
   try {
     const courseId = req.params.id;
 
-    const course = await courseModal.findById(courseId).select("-courseData");
+    const course = await courseModal.findById(courseId);
     if (!course) {
       next(new ErrorHandler("course not found", 400));
     }
@@ -250,8 +222,30 @@ export const answerQuestion = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
-// add review
 
+// =======delete course========
+
+export const deleteCourse = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        const couresId = req.params.id;
+        const coures = await courseModal.findById(couresId);
+        if (!coures) {
+          next(new ErrorHandler("Invalid course id", 400));
+        }
+        
+        await courseModal.findByIdAndDelete(couresId)
+
+        res.status(200).json({
+          sucess: true,
+          message: "delete course successfully",
+        });
+
+    } catch (error) {
+      next(new ErrorHandler(error.message, 400));
+    }
+})
+
+// =========add review=========
 export const addReview = catchAsyncErrors(async (req, res, next) => {
   try {
     const couresId = req.params.id;
