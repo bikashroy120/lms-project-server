@@ -81,9 +81,9 @@ export const getAllCourse = catchAsyncErrors(async (req, res, next) => {
       // const regSearch = new RegExp('.*' + search + '.*','i')
       filters = {
         $or: [
-          { name: { $regex: search } },
-          { category: { $regex: search } },
-          { level: { $regex: search } },
+          { name: { $regex: new RegExp(search, "i") } },
+          { category: { $regex: new RegExp(search, "i") } },
+          { level: { $regex: new RegExp(search, "i") } },
         ],
       };
     }
