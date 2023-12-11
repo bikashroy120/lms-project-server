@@ -9,7 +9,8 @@ export const addCategory = catchAsyncErrors(async(req,res,next)=>{
 
         const data = {
           title:req.body.title,
-          image:""
+          image:req.body.image,
+          description:req.body.description,
         }
 
         const category = await CategoryModal.create(data)
