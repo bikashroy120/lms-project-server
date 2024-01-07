@@ -2,14 +2,17 @@ import mongoose from "mongoose";
 
 
 const reviewSchema = new mongoose.Schema({
-    user: Object,
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
     rating: {
         type: Number,
         default: 0
     },
     comment: String,
     reviewReplay:[Object]
-})
+},{timestamps:true})
 
 
 const linkSchema = new mongoose.Schema({
@@ -17,11 +20,23 @@ const linkSchema = new mongoose.Schema({
     url: String,
 })
 
-const commrntSchema = new mongoose.Schema({
-    user: Object,
+const questionReplaySchema = new mongoose.Schema({
+    user: {
+        type:mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
+    answer:String,
+},{timestamps:true})
+
+const commentSchema = new mongoose.Schema({
+    user: {
+        type:mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
     question: String,
-    questionReples: [Object]
-})
+    questionReplay: [questionReplaySchema]
+},{timestamps:true})
+
 
 const courseDataSchema = new mongoose.Schema({
     videoUrl: String,
@@ -32,8 +47,8 @@ const courseDataSchema = new mongoose.Schema({
     videoPlayer: String,
     links: [linkSchema],
     suggestion: String,
-    question: [commrntSchema],
-})
+    question: [commentSchema],
+},{timestamps:true})
 
 
 const courseSchema = new mongoose.Schema({
@@ -81,7 +96,16 @@ const courseSchema = new mongoose.Schema({
         type: Number,
         default: 0
     }
-})
+},{timestamps:true})
+
+
+// Populate the 'user' field in commrntSchema
+// courseSchema.pre("find", function (next) {
+//     this.populate("reviews.user");
+//     this.populate("courseData.question.user");
+//     next();
+// });
+
 
 const courseModal = mongoose.model("Course", courseSchema)
 

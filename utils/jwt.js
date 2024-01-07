@@ -27,7 +27,7 @@ export const sendToken = (user, statusCode, res) => {
     // const accessToken = user.SignAccessToken();
     // const refreshToken = user.SignRefreshToken();
 
-    const accessToken = jwt.sign({id:user._id},process.env.ACCRSS_TOKEN ,{expiresIn:"5m"} )
+    const accessToken = jwt.sign({id:user._id},process.env.ACCRSS_TOKEN ,{expiresIn:"3d"} )
     const refreshToken = jwt.sign({id:user._id},process.env.REFRESH_TOKEN ,{expiresIn:"3d"} )
     // redis.set(user._id, JSON.stringify(user))
 

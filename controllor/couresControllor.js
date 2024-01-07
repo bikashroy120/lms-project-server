@@ -56,20 +56,19 @@ export const editcourse = catchAsyncErrors(async (req, res, next) => {
 // get all course
 export const getAllCourse = catchAsyncErrors(async (req, res, next) => {
   try {
-
     let filters = { ...req.query };
     const excludesFields = [
-        "limit",
-        "page",
-        "sort",
-        "fields",
-        "search",
-        "searchKey",
-        "modelName"
+      "limit",
+      "page",
+      "sort",
+      "fields",
+      "search",
+      "searchKey",
+      "modelName",
     ];
 
     excludesFields.forEach((field) => {
-        delete filters[field];
+      delete filters[field];
     });
 
     let queryStr = JSON.stringify(filters);
@@ -92,7 +91,7 @@ export const getAllCourse = catchAsyncErrors(async (req, res, next) => {
     // ------------pagination------------------
     if (req.query.limit | req.query.page) {
       const { page = 1, limit = 2 } = req.query;
-      const skip = (page - 1) * + limit;
+      const skip = (page - 1) * +limit;
       queries.skip = skip;
       queries.limit = +limit;
     }
@@ -103,7 +102,6 @@ export const getAllCourse = catchAsyncErrors(async (req, res, next) => {
       sortCateory = sortCateory.split(",").join(" ");
       queries.sort = sortCateory;
     }
-
 
     const course = await courseModal
       .find(filters)
@@ -127,7 +125,11 @@ export const getOneCouse = catchAsyncErrors(async (req, res, next) => {
   try {
     const courseId = req.params.id;
 
-    const course = await courseModal.findById(courseId);
+    const course = await courseModal
+      .findById(courseId)
+      .populate("reviews.user")
+      .populate("courseData.question.user")
+      .populate("courseData.question.questionReplay.user");
     if (!course) {
       next(new ErrorHandler("course not found", 400));
     }
@@ -161,9 +163,9 @@ export const createQuestion = catchAsyncErrors(async (req, res, next) => {
 
     // create a new question content
     const newQuestion = {
-      user: req.user,
+      user: req?.user?._id,
       question,
-      questionReples: [],
+      questionReplay: [],
     };
     // add question to our course
     courseContent.question.push(newQuestion);
@@ -206,15 +208,15 @@ export const answerQuestion = catchAsyncErrors(async (req, res, next) => {
     // create answer data
 
     const answerData = {
-      user: req.user,
+      user: req.user?._id,
       answer,
     };
     // save answer
-    question.questionReples.push(answerData);
+    question.questionReplay.push(answerData);
     await coures?.save();
 
     res.status(200).json({
-      sucess: true,
+      success: true,
       message: "answer send successfully",
     });
   } catch (error) {
@@ -222,28 +224,26 @@ export const answerQuestion = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
-
 // =======delete course========
 
-export const deleteCourse = catchAsyncErrors(async(req,res,next)=>{
-    try {
-        const couresId = req.params.id;
-        const coures = await courseModal.findById(couresId);
-        if (!coures) {
-          next(new ErrorHandler("Invalid course id", 400));
-        }
-        
-        await courseModal.findByIdAndDelete(couresId)
-
-        res.status(200).json({
-          sucess: true,
-          message: "delete course successfully",
-        });
-
-    } catch (error) {
-      next(new ErrorHandler(error.message, 400));
+export const deleteCourse = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const couresId = req.params.id;
+    const coures = await courseModal.findById(couresId);
+    if (!coures) {
+      next(new ErrorHandler("Invalid course id", 400));
     }
-})
+
+    await courseModal.findByIdAndDelete(couresId);
+
+    res.status(200).json({
+      sucess: true,
+      message: "delete course successfully",
+    });
+  } catch (error) {
+    next(new ErrorHandler(error.message, 400));
+  }
+});
 
 // =========add review=========
 export const addReview = catchAsyncErrors(async (req, res, next) => {
