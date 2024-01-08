@@ -128,6 +128,7 @@ export const getOneCouse = catchAsyncErrors(async (req, res, next) => {
     const course = await courseModal
       .findById(courseId)
       .populate("reviews.user")
+      .populate("reviews.reviewReplay.user")
       .populate("courseData.question.user")
       .populate("courseData.question.questionReplay.user");
     if (!course) {
@@ -248,8 +249,8 @@ export const deleteCourse = catchAsyncErrors(async (req, res, next) => {
 // =========add review=========
 export const addReview = catchAsyncErrors(async (req, res, next) => {
   try {
-    const couresId = req.params.id;
-    const { review, rating } = req.body;
+ 
+    const {couresId, review, rating } = req.body;
     /* ==== find coures by coures id ===== */
     const coures = await courseModal.findById(couresId);
     if (!coures) {
@@ -257,7 +258,7 @@ export const addReview = catchAsyncErrors(async (req, res, next) => {
     }
 
     const reviewData = {
-      user: req.user,
+      user: req.user._id,
       rating,
       comment: review,
     };
@@ -303,8 +304,8 @@ export const replyReview = catchAsyncErrors(async (req, res, next) => {
     }
 
     const replayData = {
-      user: req.user,
-      reviewReplay,
+      user: req.user._id,
+      answer:reviewReplay,
     };
 
     review.reviewReplay.push(replayData);

@@ -11,7 +11,7 @@ router.get("/course-admin",isAutheticated,isAdmin,getAllAdmin)
 router.delete("/delete-course/:id",isAutheticated,deleteCourse)
 router.put("/question-add",isAutheticated,createQuestion)
 router.put("/question-answer",isAutheticated,answerQuestion)
-router.put("/add-review/:id",isAutheticated,addReview)
+router.put("/add-review",isAutheticated,addReview)
 router.put("/review-replay",isAutheticated,replyReview)
 
 export default router

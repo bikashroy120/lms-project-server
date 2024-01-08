@@ -1,6 +1,14 @@
 import mongoose from "mongoose";
 
 
+const reviewReplaySchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
+    answer:String
+},{timestamps:true})
+
 const reviewSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -11,7 +19,7 @@ const reviewSchema = new mongoose.Schema({
         default: 0
     },
     comment: String,
-    reviewReplay:[Object]
+    reviewReplay:[reviewReplaySchema]
 },{timestamps:true})
 
 
