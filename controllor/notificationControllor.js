@@ -7,7 +7,7 @@ import cron from "node-cron"
 export const getNotification = catchAsyncErrors(async(req,res,next)=>{
     try {
 
-        const notification = await notificationModal.find().sort({createdAt:-1})
+        const notification = await notificationModal.find({status:"unread"}).sort({createdAt:-1}).populate("user")
         res.status(200).json({
             success:true,
             notification

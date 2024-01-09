@@ -3,10 +3,14 @@ import mongoose from "mongoose";
 
 const notificationSchema = new mongoose.Schema({
     user:{
-        type:String,
-        required:true 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
     },
     title:{
+        type:String,
+        required:true
+    },
+    path:{
         type:String,
         required:true
     },

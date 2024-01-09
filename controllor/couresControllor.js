@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import cloudinary from "cloudinary";
 import { createCourse } from "../services/couresServices.js";
 import courseModal from "../models/courseModel.js";
+import notificationModal from "../models/notificationModel.js";
 
 // create new course
 export const uploadCoures = catchAsyncErrors(async (req, res, next) => {
@@ -173,6 +174,14 @@ export const createQuestion = catchAsyncErrors(async (req, res, next) => {
 
     await coures?.save();
 
+    /* ==== create a notification ===== */
+    await notificationModal.create({
+      user: req.user._id,
+      title: "New Question",
+      message: `You have a new create Question form ${req.user.name}`,
+      path: `/access-course/${couresId}`,
+    });
+
     res.status(200).json({
       success: true,
       message: "question add successfully",
@@ -216,6 +225,14 @@ export const answerQuestion = catchAsyncErrors(async (req, res, next) => {
     question.questionReplay.push(answerData);
     await coures?.save();
 
+    /* ==== create a notification ===== */
+    await notificationModal.create({
+      user: req.user._id,
+      title: "Answer Question",
+      message: `You have a new Answer Question form ${req.user.name}`,
+      path: `/access-course/${couresId}`,
+    });
+
     res.status(200).json({
       success: true,
       message: "answer send successfully",
@@ -249,8 +266,7 @@ export const deleteCourse = catchAsyncErrors(async (req, res, next) => {
 // =========add review=========
 export const addReview = catchAsyncErrors(async (req, res, next) => {
   try {
- 
-    const {couresId, review, rating } = req.body;
+    const { couresId, review, rating } = req.body;
     /* ==== find coures by coures id ===== */
     const coures = await courseModal.findById(couresId);
     if (!coures) {
@@ -274,9 +290,13 @@ export const addReview = catchAsyncErrors(async (req, res, next) => {
 
     await coures?.save();
 
-    const notification = {
-      title: "new revisition add",
-    };
+    /* ==== create a notification ===== */
+    await notificationModal.create({
+      user: req.user._id,
+      title: "New Review",
+      message: `You have a new review form ${req.user.name}`,
+      path: `/access-course/${couresId}`,
+    });
 
     res.status(200).json({
       success: true,
@@ -305,7 +325,7 @@ export const replyReview = catchAsyncErrors(async (req, res, next) => {
 
     const replayData = {
       user: req.user._id,
-      answer:reviewReplay,
+      answer: reviewReplay,
     };
 
     review.reviewReplay.push(replayData);
