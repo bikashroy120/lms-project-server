@@ -154,7 +154,6 @@ export const updateToken = catchAsyncErrors(async (req, res, next) => {
       return next(new ErrorHandler("access token is not valid", 400));
     }
 
-    console.log(decode);
     /* ==== find user by  token ===== */
     const user = await userModal.findById(decode.id);
     if (!user) {
