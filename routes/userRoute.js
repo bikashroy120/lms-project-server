@@ -9,7 +9,7 @@ router.post("/login",userLogin);
 router.get("/logout",isAutheticated,logoutUser);
 router.get("/refresh-token",updateToken);
 router.get("/me",isAutheticated,getOneUser);
-router.get("/users",isAutheticated,isAdmin,getAllUser)
+router.get("/users",isAutheticated,getAllUser)
 router.post("/update-password",isAutheticated,updatePassword);
 router.put("/update-avater",isAutheticated,updateAvater);
 router.put("/update-user",isAutheticated,updateUser);

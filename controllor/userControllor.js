@@ -306,17 +306,15 @@ export const updateUser = catchAsyncErrors(async (req, res, next) => {
       return next(new ErrorHandler("user not found", 400));
     }
 
-    user.name=name;
-    user.avater=avater
+    user.name = name;
+    user.avater = avater;
 
-    await user.save()
+    await user.save();
     res.status(200).json({
       success: true,
       message: "user profile update success",
       user,
     });
-    
-
   } catch (error) {
     return next(new ErrorHandler(error.message, 400));
   }
@@ -325,7 +323,51 @@ export const updateUser = catchAsyncErrors(async (req, res, next) => {
 // get all user for admin
 export const getAllUser = catchAsyncErrors(async (req, res, next) => {
   try {
-    const users = await userModal.find().sort({ createdAt: -1 });
+    let filters = { ...req.query };
+    const excludesFields = [
+      "limit",
+      "page",
+      "sort",
+      "fields",
+      "search",
+      "searchKey",
+      "modelName",
+    ];
+
+    excludesFields.forEach((field) => {
+      delete filters[field];
+    });
+
+    let queryStr = JSON.stringify(filters);
+    queryStr = queryStr.replace(/\b|gte|lte|lt\b/g, (match) => `${match}`);
+    filters = JSON.parse(queryStr);
+
+    if (req.query.search) {
+      const search = req.query.search || "";
+      // const regSearch = new RegExp('.*' + search + '.*','i')
+      filters = {
+        $or: [
+          { name: { $regex: new RegExp(search, "i") } },
+          { email: { $regex: new RegExp(search, "i") } },
+        ],
+      };
+    }
+    // common-----------------------------------
+    let queries = {};
+    // ------------pagination------------------
+    if (req.query.limit | req.query.page) {
+      const { page = 1, limit = 2 } = req.query;
+      const skip = (page - 1) * +limit;
+      queries.skip = skip;
+      queries.limit = +limit;
+    }
+
+    const users = await userModal
+      .find(filters)
+      .skip(queries.skip)
+      .limit(queries.limit)
+      .sort({ createdAt: -1 });
+      
     res.status(200).json({
       success: true,
       users,
