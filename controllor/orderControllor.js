@@ -55,3 +55,64 @@ export const createOrder = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler(error.message, 500))
     }
 })
+
+
+export const getAllOrder = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        let filters = { ...req.query };
+        const excludesFields = [
+          "limit",
+          "page",
+          "sort",
+          "fields",
+          "search",
+          "searchKey",
+          "modelName",
+        ];
+    
+        excludesFields.forEach((field) => {
+          delete filters[field];
+        });
+    
+        let queryStr = JSON.stringify(filters);
+        queryStr = queryStr.replace(/\b|gte|lte|lt\b/g, (match) => `${match}`);
+        filters = JSON.parse(queryStr);
+    
+        if (req.query.search) {
+          const search = req.query.search || "";
+          // const regSearch = new RegExp('.*' + search + '.*','i')
+          filters = {
+            $or: [
+              { name: { $regex: new RegExp(search, "i") } },
+              { email: { $regex: new RegExp(search, "i") } },
+            ],
+          };
+        }
+        // common-----------------------------------
+        let queries = {};
+        // ------------pagination------------------
+        if (req.query.limit | req.query.page) {
+          const { page = 1, limit = 2 } = req.query;
+          const skip = (page - 1) * +limit;
+          queries.skip = skip;
+          queries.limit = +limit;
+        }
+    
+        const count = await orderModale.find(filters).countDocuments()
+        const order = await orderModale
+        .find(filters)
+        .populate("courseId")
+        .populate("userId")
+        .skip(queries.skip)
+        .limit(queries.limit)
+        .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success:true,
+            item:count,
+            order
+        })
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 400)) 
+    }
+})

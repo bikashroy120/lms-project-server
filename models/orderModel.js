@@ -3,12 +3,12 @@ import mongoose from "mongoose"
 
 const orderSchema = new mongoose.Schema({
     courseId:{
-        type:String,
-        required:true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
     },
     userId:{
-        type:String,
-        required:true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
     },
     payment_info:{
         type:Object,

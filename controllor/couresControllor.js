@@ -104,6 +104,8 @@ export const getAllCourse = catchAsyncErrors(async (req, res, next) => {
       queries.sort = sortCateory;
     }
 
+
+
     const course = await courseModal
       .find(filters)
       .skip(queries.skip)

@@ -362,6 +362,8 @@ export const getAllUser = catchAsyncErrors(async (req, res, next) => {
       queries.limit = +limit;
     }
 
+    const count = await userModal.find(filters).countDocuments()
+
     const users = await userModal
       .find(filters)
       .skip(queries.skip)
@@ -370,6 +372,7 @@ export const getAllUser = catchAsyncErrors(async (req, res, next) => {
       
     res.status(200).json({
       success: true,
+      item: count,
       users,
     });
   } catch (error) {

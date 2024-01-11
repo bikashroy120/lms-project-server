@@ -6,7 +6,7 @@ import http from "http"
 import { initSocketServer } from "./socketServer.js";
 dotenv.config
 
-const server = http.createServer(app)
+// const server = http.createServer(app)
 
 cloudinary.config({
     cloud_name:process.env.CLOUD_NAME,
@@ -14,9 +14,9 @@ cloudinary.config({
     secret_key:process.env.CLOUD_SECRET_KEY,
 })
 
-initSocketServer(server)
+// initSocketServer(server)
 
-server.listen(8000,()=>{
+app.listen(8000,()=>{
     console.log("server is running ")
     connectDB()
 })
