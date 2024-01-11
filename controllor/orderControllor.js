@@ -116,3 +116,23 @@ export const getAllOrder = catchAsyncErrors(async(req,res,next)=>{
         return next(new ErrorHandler(error.message, 400)) 
     }
 })
+
+
+export const deleteOrder = catchAsyncErrors(async(req,res,next)=>{
+    try {
+        const orderId = req.params.id;
+        const order = await orderModale.findById(orderId);
+        if (!order) {
+          next(new ErrorHandler("Invalid order id", 400));
+        }
+    
+        await orderModale.findByIdAndDelete(orderId);
+    
+        res.status(200).json({
+          success: true,
+          message: "delete order successfully",
+        });
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 400)) 
+    }
+})
