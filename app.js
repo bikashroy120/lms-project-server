@@ -12,6 +12,7 @@ import orderRoute from "./routes/orderRoute.js"
 import notificationRoute from "./routes/notificationRoute.js"
 import analyticsRoute from "./routes/analyticsRoute.js"
 import categoryRoute from "./routes/categoryRoute.js"
+import contactRoute from "./routes/contactRoute.js"
 
 
 dotenv.config()
@@ -39,6 +40,7 @@ app.use("/api/v1/order",orderRoute)
 app.use("/api/v1/",notificationRoute)
 app.use("/api/v1/",analyticsRoute)
 app.use("/api/v1/",categoryRoute)
+app.use("/api/v1/contact/",contactRoute)
 
 // testing api
 app.get("/test",(req,res,next)=>{
