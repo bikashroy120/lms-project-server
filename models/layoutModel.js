@@ -8,11 +8,21 @@ const layoutSchema = new mongoose.Schema({
         unique:true,
     },
     home:{
+      logo:String,
       title:String,
       subTitle:String,
       Trusted:String,
       image:String,
       review:Number,
+      Courses:Number,
+      Tutors:Number,
+      Certified:Number,
+      Students:Number,
+      phone:String,
+      email:String,
+      address:String,
+      text:String,
+      links:[{title:String,url:String}]
     },
     contact:{
         phone:String,
