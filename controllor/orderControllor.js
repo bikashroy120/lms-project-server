@@ -29,7 +29,7 @@ export const createOrder = catchAsyncErrors(async (req, res, next) => {
         }
 
         /* ==== update user course ===== */
-        user?.courses.push(course?._id)
+        user?.courses.push({courseId:course?._id})
         await user.save()
 
 
@@ -37,6 +37,7 @@ export const createOrder = catchAsyncErrors(async (req, res, next) => {
         await notificationModal.create({
             user:user?._id,
             title:"New Order",
+            path:"/admin/order",
             message:`You have a new order form ${course?.name}`
         })
 

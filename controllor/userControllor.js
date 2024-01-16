@@ -198,7 +198,7 @@ export const getOneUser = catchAsyncErrors(async (req, res, next) => {
     console.log(req.user);
 
     /* ==== find user  ===== */
-    const user = await userModal.findById(userId);
+    const user = await userModal.findById(userId).populate("courses.courseId");
     if (!user) {
       return next(new ErrorHandler("user not found", 400));
     }
@@ -298,7 +298,7 @@ export const updateAvater = catchAsyncErrors(async (req, res, next) => {
 export const updateUser = catchAsyncErrors(async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { name, avater } = req.body;
+    const { name, avater,phone,address } = req.body;
 
     /* ==== find user by user id  ===== */
     const user = await userModal.findById(userId);
@@ -308,6 +308,8 @@ export const updateUser = catchAsyncErrors(async (req, res, next) => {
 
     user.name = name;
     user.avater = avater;
+    user.phone = phone;
+    user.address = address;
 
     await user.save();
     res.status(200).json({

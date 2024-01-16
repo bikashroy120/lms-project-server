@@ -104,7 +104,7 @@ export const getAllCourse = catchAsyncErrors(async (req, res, next) => {
       queries.sort = sortCateory;
     }
 
-
+    const count = await courseModal.find(filters).countDocuments()
 
     const course = await courseModal
       .find(filters)
@@ -115,7 +115,7 @@ export const getAllCourse = catchAsyncErrors(async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      item: course.length,
+      item: count,
       course,
     });
   } catch (error) {

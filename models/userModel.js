@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema({
         required:[true,"Please enter your password"],
         select:true
     },
+    phone:String,
     address:String,
     avater:{
         type:String
@@ -31,7 +32,10 @@ const userSchema = new mongoose.Schema({
     },
     courses:[
         {
-            courseId:String
+            courseId:{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Course",
+            }
         }
     ]
 },{timestamps:true})
