@@ -6,6 +6,29 @@ import courseModal from "../models/courseModel.js";
 import orderModale from "../models/orderModel.js";
 
 // get user Analyser --- for admin
+
+
+export const adminAnalytics = catchAsyncErrors(async(req,res,next)=>{
+    try {
+
+        const totalOrder = await orderModale.find().populate("courseId")
+        const user = await userModal.find()
+        const course = await courseModal.find()
+        const totalPrice = totalOrder.reduce((accumulator, item) => accumulator + item?.courseId?.price, 0);
+
+        res.status(200).json({
+            success:true,
+            order:totalPrice,
+            user:user?.length,
+            course:course?.length
+        })
+
+    } catch (error) {
+        next(new ErrorHandler(error.message, 400)) 
+    }
+})
+
+
 export const getUserAnalytics = catchAsyncErrors(async(req,res,next)=>{
     try {
         const users = await generateLast7DaysData(userModal)
