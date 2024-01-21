@@ -111,7 +111,7 @@ export const userLogin = catchAsyncErrors(async (req, res, next) => {
       return next(new ErrorHandler("Please Enter Email Or Password", 400));
     }
 
-    const user = await userModal.findOne({ email }).select("+password");
+    const user = await userModal.findOne({ email }).populate("courses.courseId").select("+password");
 
     if (!user) {
       return next(new ErrorHandler("Invlied email and password", 400));
