@@ -13,14 +13,13 @@ export const adminAnalytics = catchAsyncErrors(async(req,res,next)=>{
 
         const totalOrder = await orderModale.find().populate("courseId")
         const user = await userModal.find()
-        const course = await courseModal.find()
         const totalPrice = totalOrder.reduce((accumulator, item) => accumulator + item?.courseId?.price, 0);
 
         res.status(200).json({
             success:true,
             order:totalPrice,
-            user:user?.length,
-            course:course?.length
+            enroll:totalOrder?.length,
+            user:user?.length
         })
 
     } catch (error) {
