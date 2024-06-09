@@ -29,7 +29,7 @@ app.use(cookieParser())
 // cors origin resouse shering
 app.use(
     cors({
-        origin:["http://localhost:3000","https://lms-client-orpin.vercel.app"],
+        origin:true,
         credentials:true
     })
 )
