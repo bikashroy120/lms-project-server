@@ -27,12 +27,21 @@ app.use(express.json({limit:"50mb"}))
 app.use(cookieParser())
 
 // cors origin resouse shering
+// CORS origin resource sharing
 app.use(
     cors({
-        origin:true,
-        credentials:true
+      origin: (origin, callback) => {
+        // Allow requests from specific origins or all origins
+        const whitelist = ["http://localhost:3000", "https://lms-client-orpin.vercel.app"];
+        if (whitelist.indexOf(origin) !== -1 || !origin) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
+      credentials: true,
     })
-)
+  );
 
 // routes
 app.use("/api/v1",userRoute)
