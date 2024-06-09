@@ -28,20 +28,7 @@ app.use(cookieParser())
 
 // cors origin resouse shering
 // CORS origin resource sharing
-app.use(
-    cors({
-      origin: (origin, callback) => {
-        // Allow requests from specific origins or all origins
-        const whitelist = ["http://localhost:3000", "https://lms-client-orpin.vercel.app"];
-        if (whitelist.indexOf(origin) !== -1 || !origin) {
-          callback(null, true);
-        } else {
-          callback(new Error("Not allowed by CORS"));
-        }
-      },
-      credentials: true,
-    })
-  );
+app.use(cors());
 
 // routes
 app.use("/api/v1",userRoute)
