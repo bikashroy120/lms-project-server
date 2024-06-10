@@ -29,7 +29,7 @@ app.use(cookieParser())
 // cors origin resouse shering
 // CORS origin resource sharing
 const allowedOrigins = [
-  "http://localhost:3000",
+  "http://localhost:3000","https://lms-client-orpin.vercel.app",
   // Add more origins if needed
 ];
 
