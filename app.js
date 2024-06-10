@@ -52,19 +52,19 @@ app.get("/test",(req,res,next)=>{
 })
 
 
-app.use(
-  cors({
-    origin: function(origin, callback) {
-      // Check if the origin is in the allowedOrigins array or if it's undefined (for same-origin requests)
-      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: function(origin, callback) {
+//       // Check if the origin is in the allowedOrigins array or if it's undefined (for same-origin requests)
+//       if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     credentials: true,
+//   })
+// );
 
 
 // unnone route
