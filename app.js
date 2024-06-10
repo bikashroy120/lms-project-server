@@ -33,6 +33,9 @@ const allowedOrigins = [
   // Add more origins if needed
 ];
 
+
+app.use(cors())
+
 // routes
 app.use("/api/v1",userRoute)
 app.use("/api/v1/course",coruseRoute)
